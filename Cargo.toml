@@ -18,3 +18,11 @@ tokio = { version = "1.40", features = ["macros", "rt-multi-thread"] }
 [profile.dist]
 inherits = "release"
 lto = "thin"
+
+[package.metadata.release]
+publish = false
+sign-commit = false
+sign-tag = false
+push = true
+tag-name = "v{{version}}"
+tag-message = "Release v{{version}}"
