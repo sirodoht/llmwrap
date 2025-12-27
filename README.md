@@ -30,8 +30,8 @@ Run this command? [y/N]:
 ```
 $ llmwrap tar extract dump.tar.gz
 
-Proposed ffmpeg command:
-Not applicable: extracting a tarball is not possible with ffmpeg.
+Proposed command:
+tar -xzf 'dump.tar.gz'
 
 Run this command? [y/N]:
 ```

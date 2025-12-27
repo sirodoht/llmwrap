@@ -9,10 +9,10 @@ use std::process::Command;
 #[derive(Parser, Debug)]
 #[command(
     version,
-    about = "Describe an ffmpeg task in plain English and get a command back"
+    about = "Describe a shell task in plain English and get a runnable command back"
 )]
 struct Cli {
-    /// Natural language description of the ffmpeg task, e.g. "convert input.mp4 to gif"
+    /// Natural language description of the shell task, e.g. "convert input.mp4 to gif"
     prompt: Vec<String>,
 
     /// Model to use for the Responses API
@@ -47,7 +47,7 @@ struct ContentPart {
     text: String,
 }
 
-const SYSTEM_PROMPT: &str = "You translate natural-language requests into a single ffmpeg shell command. \
+const SYSTEM_PROMPT: &str = "You translate natural-language requests into a single shell command. \
 Respond with only the runnable command, no explanations, no code fences. \
 Prefer safe quoting for filenames. If the request is impossible, reply with a brief reason.";
 
@@ -64,12 +64,11 @@ async fn main() -> Result<()> {
         .context("Set LLMWRAP_OPENAI_API_KEY in your environment before running this tool")?;
 
     let client = Client::builder().build()?;
-    let command_text =
-        fetch_ffmpeg_command(&client, &api_key, &cli.api_base, &cli.model, &description)
-            .await
-            .context("Failed to get command from OpenAI Responses API")?;
+    let command_text = fetch_command(&client, &api_key, &cli.api_base, &cli.model, &description)
+        .await
+        .context("Failed to get command from OpenAI Responses API")?;
 
-    println!("\nProposed ffmpeg command:\n{}\n", command_text);
+    println!("\nProposed command:\n{}\n", command_text);
 
     if !confirm_run()? {
         println!("Aborted by user; command not executed.");
@@ -80,7 +79,7 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-async fn fetch_ffmpeg_command(
+async fn fetch_command(
     client: &Client,
     api_key: &str,
     api_base: &str,
