@@ -1,24 +1,37 @@
 # llmwrap
 
-Command line tool to translate natural-language requests into a single runnable
-shell command. Work with OpenAI Responses API.
+Command line tool to translate natural language requests into
+shell commands. Works with OpenAI Responses API.
 
 Inspired from https://www.npmjs.com/package/ezff
 
 ## Usage
 
 ```
+# set OpenAI API key env variable in your shell
+export LLMWRAP_OPENAI_API_KEY=sk-xxx >> ~/.bashrc
+
 llmwrap <tool> <what to do>
 ```
 
-## Example
+## Example with ffmeg
 
 ```
-export LLMWRAP_OPENAI_API_KEY=sk-xxx
-llmwrap ffmpeg convert video.mp4 to gif
+$ llmwrap ffmpeg convert video.mp4 to gif
 
 Proposed ffmpeg command:
 ffmpeg -i "video.mp4" -vf "fps=10,scale=320:-1:flags=lanczos" -loop 0 "video.gif"
+
+Run this command? [y/N]:
+```
+
+## Example with tar
+
+```
+$ llmwrap tar extract dump.tar.gz
+
+Proposed ffmpeg command:
+Not applicable: extracting a tarball is not possible with ffmpeg.
 
 Run this command? [y/N]:
 ```
