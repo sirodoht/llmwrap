@@ -9,10 +9,10 @@ use std::process::Command;
 #[derive(Parser, Debug)]
 #[command(
     version,
-    about = "Describe any command invocation in plain English (e.g. `ffmpeg convert video.mp4 to gif`, `tar extract data.tar.gz`)"
+    about = "Describe an ffmpeg task in plain English and get a command back"
 )]
 struct Cli {
-    /// Natural language description that starts with the target tool, e.g. "ffmpeg convert input.mp4 to gif" or "tar extract data.tar.gz"
+    /// Natural language description of the ffmpeg task, e.g. "convert input.mp4 to gif"
     prompt: Vec<String>,
 
     /// Model to use for the Responses API
@@ -22,7 +22,7 @@ struct Cli {
     /// Base URL for the OpenAI API (defaults to api.openai.com)
     #[arg(
         long,
-        env = "OPENAI_BASE_URL",
+        env = "LLMWRAP_OPENAI_BASE_URL",
         default_value = "https://api.openai.com/v1"
     )]
     api_base: String,
@@ -47,10 +47,9 @@ struct ContentPart {
     text: String,
 }
 
-const SYSTEM_PROMPT: &str = "You translate natural-language requests into a single runnable shell command. \
-The user message begins with the target command (e.g., ffmpeg, tar); keep that command as the first token. \
-Respond with only the final command, no explanations, no code fences. \
-Prefer safe quoting for filenames. If the request is impossible or unsafe, reply with a brief reason.";
+const SYSTEM_PROMPT: &str = "You translate natural-language requests into a single ffmpeg shell command. \
+Respond with only the runnable command, no explanations, no code fences. \
+Prefer safe quoting for filenames. If the request is impossible, reply with a brief reason.";
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -58,20 +57,19 @@ async fn main() -> Result<()> {
     let description = cli.prompt.join(" ");
 
     if description.trim().is_empty() {
-        anyhow::bail!(
-            "Please provide a description, e.g. `llmwrap ffmpeg convert video.mp4 to gif`"
-        );
+        anyhow::bail!("Please provide a description, e.g. `llmwrap convert video.mp4 to gif`");
     }
 
-    let api_key = std::env::var("OPENAI_API_KEY")
-        .context("Set OPENAI_API_KEY in your environment before running this tool")?;
+    let api_key = std::env::var("LLMWRAP_OPENAI_API_KEY")
+        .context("Set LLMWRAP_OPENAI_API_KEY in your environment before running this tool")?;
 
     let client = Client::builder().build()?;
-    let command_text = fetch_command(&client, &api_key, &cli.api_base, &cli.model, &description)
-        .await
-        .context("Failed to get command from OpenAI Responses API")?;
+    let command_text =
+        fetch_ffmpeg_command(&client, &api_key, &cli.api_base, &cli.model, &description)
+            .await
+            .context("Failed to get command from OpenAI Responses API")?;
 
-    println!("\nProposed command:\n{}\n", command_text);
+    println!("\nProposed ffmpeg command:\n{}\n", command_text);
 
     if !confirm_run()? {
         println!("Aborted by user; command not executed.");
@@ -82,7 +80,7 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-async fn fetch_command(
+async fn fetch_ffmpeg_command(
     client: &Client,
     api_key: &str,
     api_base: &str,
