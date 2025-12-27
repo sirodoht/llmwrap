@@ -17,23 +17,24 @@ llmwrap <tool> <what to do>
 ## Example with ffmeg
 
 ```
-$ llmwrap ffmpeg convert video.mp4 to gif
+$ llmwrap convert video.mp4 to gif
 
-Proposed ffmpeg command:
+Proposed command:
 ffmpeg -i "video.mp4" -vf "fps=10,scale=320:-1:flags=lanczos" -loop 0 "video.gif"
 
-Run this command? [y/N]:
+Run this command? [Y/n]:
 ```
 
 ## Example with tar
 
 ```
-$ llmwrap tar extract dump.tar.gz
+$ llmwrap tar extract archive.tar.gz
 
 Proposed command:
-tar -xzf 'dump.tar.gz'
+tar -xf archive.tar.gz
 
-Run this command? [y/N]:
+Run this command? [Y/n]:
+Executing: tar -xf archive.tar.gz
 ```
 
 ## License

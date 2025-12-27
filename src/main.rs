@@ -184,13 +184,13 @@ fn sanitize_command(raw: &str) -> String {
 }
 
 fn confirm_run() -> Result<bool> {
-    print!("Run this command? [y/N]: ");
+    print!("Run this command? [Y/n]: ");
     io::stdout().flush()?;
 
     let mut input = String::new();
     io::stdin().read_line(&mut input)?;
     let decision = input.trim().to_lowercase();
-    Ok(decision == "y" || decision == "yes")
+    Ok(decision.is_empty() || decision == "y" || decision == "yes")
 }
 
 fn run_command(command: &str) -> Result<()> {
