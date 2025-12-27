@@ -3,6 +3,8 @@ name = "llmwrap"
 version = "0.1.0"
 edition = "2024"
 repository = "https://github.com/sirodoht/llmwrap"
+description = "like rlwrap but with an LLM instead"
+license = "AGPL-3.0-only"
 
 [dependencies]
 anyhow = "1.0"
